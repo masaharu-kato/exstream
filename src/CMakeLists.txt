@@ -4,4 +4,6 @@ add_library(zstream STATIC
 	"miniz.cpp"
 	"vector_streambuf.cpp"
 	"zstream.cpp"
+	"bstream.cpp"
+	"bfstream.cpp"
 )
