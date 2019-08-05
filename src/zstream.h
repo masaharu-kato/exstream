@@ -37,26 +37,10 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGES.
 #include <iostream>
 #include <memory>
 #include <unordered_map>
-#include <vector>
+#include "zip_file_header.h"
+#include "bstream.h"
 
 namespace exs {
-
-	//	A structure representing the header that occurs before each compressed file in a ZIP archive 
-	//	and again at the end of the file with more information.
-	struct ZipFileHeader {
-		std::uint16_t version = 20;
-		std::uint16_t flags = 0;
-		std::uint16_t compression_type = 8;
-		std::uint16_t stamp_date = 0;
-		std::uint16_t stamp_time = 0;
-		std::uint32_t crc = 0;
-		std::uint32_t compressed_size = 0;
-		std::uint32_t uncompressed_size = 0;
-		std::string filename;
-		std::string comment;
-		std::vector<std::uint8_t> extra;
-		std::uint32_t header_offset = 0;
-	};
 
 	using Path = std::string;
 
@@ -64,34 +48,34 @@ namespace exs {
 	// according to the ZIP format.
 	class ozstream {
 	public:
-		ozstream(std::ostream& stream);
+		ozstream(std::unique_ptr<streambuf> sb);
 		virtual ~ozstream();
 
 		// Returns a pointer to a streambuf which compresses the data it receives.
 		std::unique_ptr<std::streambuf> open(const Path& file);
 
 	private:
-		std::vector<ZipFileHeader> file_headers;
-		std::ostream& os;
+		std::vector<zip_file_header> file_headers;
+		obstream os;
 	};
 
 	//	Reads an archive containing a number of files from an istream 
 	//	and allows them to be decompressed into an istream.
 	class izstream {
 	public:
-		izstream(std::istream& is);
+		izstream(std::unique_ptr<streambuf> sb);
 		virtual ~izstream();
 
-		std::unique_ptr<std::streambuf> open(const Path& file) const;
-		std::string read(const Path& file) const;
+		std::unique_ptr<std::streambuf> open(const Path& file);
+		std::string read(const Path& file);
 		std::vector<Path> files() const;
 		bool has_file(const Path& filename) const;
 
 	private:
 		bool read_central_header();
 
-		std::unordered_map<std::string, ZipFileHeader> file_headers;
-		std::istream& is;
+		std::unordered_map<std::string, zip_file_header> file_headers;
+		ibstream is;
 	};
 
 }

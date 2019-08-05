@@ -1,7 +1,7 @@
 #include <iostream>
 #include <fstream>
 #include <ctime>
-#include "zstream.h"
+#include "zfstream.h"
 
 using namespace exs;
 
@@ -9,10 +9,7 @@ int main(int argc, char* argv[]) {
 
 	if(argc < 2) { std::cerr << "Input file not specified.\n"; return -1; }
 
-	std::ifstream is(argv[1], std::ios::binary);
-	if(is.fail()) { std::cerr << "Failed to open input file.\n"; return -1; }
-
-	exs::izstream izs(is);
+	exs::izfstream izs(argv[1]);
 
 	for(auto path : izs.files()) {
 		std::cout << "[" << path << "]\n";
@@ -27,10 +24,7 @@ int main(int argc, char* argv[]) {
 
 	if(argc < 3) { std::cerr << "Output file not specified.\n"; return -2; }
 
-	std::ofstream os(argv[2], std::ios::binary);
-	if(os.fail()) { std::cerr << "Failed to open output file.\n"; return -2; }
-
-	exs::ozstream ozs(os);
+	exs::ozfstream ozs(argv[2]);
 
 	for(auto path : izs.files()) {
 		std::cout << "[" << path << "]\n";

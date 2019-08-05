@@ -1,27 +1,15 @@
 #include "bfstream.h"
 using namespace exs;
 
-obfstream::obfstream(const char* filename, std::ios_base::openmode mode)
-	: obstream(&fb) 
-{
-	if(!fb.open(filename, mode | ios_base::binary | ios_base::out)) {
-		throw std::runtime_error("Failed to open file.");
-	}
-}
+obfstream::obfstream(const char* filename)
+	: obstream(std::make_unique<obfilebuf>(filename)) {}
 
-obfstream::obfstream(std::string filename, std::ios_base::openmode mode)
-	: obfstream(filename.c_str(), mode)
-{}
+obfstream::obfstream(std::string filename)
+	: obstream(std::make_unique<obfilebuf>(filename)) {}
 
 
-ibfstream::ibfstream(const char* filename, std::ios_base::openmode mode)
-	: ibstream(&fb) 
-{
-	if(!fb.open(filename, mode | ios_base::binary | ios_base::in)) {
-		throw std::runtime_error("Failed to open file.");
-	}
-}
+ibfstream::ibfstream(const char* filename)
+	: ibstream(std::make_unique<ibfilebuf>(filename)) {}
 
-ibfstream::ibfstream(std::string filename, std::ios_base::openmode mode)
-	: ibfstream(filename.c_str(), mode)
-{}
+ibfstream::ibfstream(std::string filename)
+	: ibstream(std::make_unique<ibfilebuf>(filename)) {}

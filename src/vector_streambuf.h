@@ -60,8 +60,7 @@ namespace exs {
 	/// <summary>
 	/// Allows a std::vector to be written through a std::ostream.
 	/// </summary>
-	class vector_ostreambuf : public std::streambuf
-	{
+	class vector_ostreambuf : public std::streambuf {
 		using int_type = std::streambuf::int_type;
 
 	public:
