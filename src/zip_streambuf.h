@@ -1,21 +1,22 @@
+#pragma once
+#include "stream.h"
 #include "zip_file_header.h"
 #include "miniz.h"
 #include <array>
 
 namespace exs {
-	
 
-
-	class zip_streambuf_compress : public std::streambuf {
+	//	zip stream buffer to compress (to output)
+	class zip_streambuf_compress : public streambuf {
 	public:
-		zip_streambuf_compress(zip_file_header* central_header, obstream &os);
+		zip_streambuf_compress(zip_file_header* central_header, obstream& os);
 		virtual ~zip_streambuf_compress();
 
 	protected:
 		int process(bool flush);
-		virtual int sync();
-		virtual int underflow();
-		virtual int overflow(int c = EOF);
+		virtual int sync() override;
+		virtual int underflow() override;
+		virtual int overflow(int c = EOF) override;
 
 	private:
 		static constexpr std::size_t buffer_size = 512;
@@ -34,13 +35,14 @@ namespace exs {
 	};
 
 
-	class zip_streambuf_decompress : public std::streambuf {
+	//	zip stream buffer to decompress (to input)
+	class zip_streambuf_decompress : public streambuf {
 	public:
-		zip_streambuf_decompress(ibstream &is, const zip_file_header& central_header);
+		zip_streambuf_decompress(ibstream& is, const zip_file_header& central_header);
 		virtual ~zip_streambuf_decompress();
 		int process();
-		virtual int underflow();
-		virtual int overflow(int c = EOF);
+		virtual int underflow() override;
+		virtual int overflow(int c = EOF) override;
 
 	private:
 		static constexpr std::size_t buffer_size = 512;
@@ -56,8 +58,8 @@ namespace exs {
 		bool valid;
 		bool compressed_data;
 
-		static const unsigned short DEFLATE = 8;
-		static const unsigned short UNCOMPRESSED = 0;
+		static constexpr unsigned short DEFLATE = 8;
+		static constexpr unsigned short UNCOMPRESSED = 0;
 
 	};
 

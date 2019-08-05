@@ -31,12 +31,11 @@ ozstream::~ozstream()
     os << std::uint16_t(0);								//	 zip comment
 }
 
-std::unique_ptr<std::streambuf> ozstream::open(const Path &filename)
+std::unique_ptr<streambuf> ozstream::open(const Path &filename)
 {
     zip_file_header header;
     header.filename = filename;
     file_headers.push_back(header);
-    auto buffer = new zip_streambuf_compress(&file_headers.back(), os);
 
-    return std::unique_ptr<zip_streambuf_compress>(buffer);
+    return std::make_unique<zip_streambuf_compress>(&file_headers.back(), os);
 }

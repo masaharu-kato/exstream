@@ -3,6 +3,7 @@
 
 namespace exs {
 
+	//	binary output stream
 	class obstream : public ostream {
 	public:
 		using ostream::ostream;
@@ -13,6 +14,7 @@ namespace exs {
 	};
 
 
+	//	binary input stream
 	class ibstream : public istream {
 	public:
 		using istream::istream;

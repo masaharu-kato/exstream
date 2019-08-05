@@ -44,6 +44,7 @@ namespace exs {
 
 	using Path = std::string;
 
+	//	zip output stream
 	// Writes a series of uncompressed binary file data as ostreams into another ostream
 	// according to the ZIP format.
 	class ozstream {
@@ -51,14 +52,18 @@ namespace exs {
 		ozstream(std::unique_ptr<streambuf> sb);
 		virtual ~ozstream();
 
-		// Returns a pointer to a streambuf which compresses the data it receives.
-		std::unique_ptr<std::streambuf> open(const Path& file);
+		//	Returns a pointer to a streambuf which compresses the data it receives.
+		std::unique_ptr<streambuf> open(const Path& file);
 
 	private:
+		//	list of written file headers
 		std::vector<zip_file_header> file_headers;
+
+		//	binary output stream
 		obstream os;
 	};
 
+	//	zip input stream
 	//	Reads an archive containing a number of files from an istream 
 	//	and allows them to be decompressed into an istream.
 	class izstream {
@@ -66,15 +71,26 @@ namespace exs {
 		izstream(std::unique_ptr<streambuf> sb);
 		virtual ~izstream();
 
-		std::unique_ptr<std::streambuf> open(const Path& file);
-		std::string read(const Path& file);
+		//	open specified file as stream buffer
+		std::unique_ptr<streambuf> open(const Path& filename);
+
+		//	read whole content of specified file
+		std::string read(const Path& filename);
+
+		//	returns list of path of file in zip
 		std::vector<Path> files() const;
+
+		//	returns zip has specified file
 		bool has_file(const Path& filename) const;
 
 	private:
+		//	read main header of zip
 		bool read_central_header();
 
+		//	list of path and header of each file
 		std::unordered_map<std::string, zip_file_header> file_headers;
+
+		//	binary input stream
 		ibstream is;
 	};
 

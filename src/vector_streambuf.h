@@ -23,23 +23,23 @@
 
 #pragma once
 
+#include "stream.h"
 #include <algorithm>
 #include <iostream>
 #include <vector>
 
 namespace exs {
 
-	/// <summary>
-	/// Allows a std::vector to be read through a std::istream.
-	/// </summary>
-	class vector_istreambuf : public std::streambuf {
-		using int_type = std::streambuf::int_type;
+	//	vector input stream buffer
+	//	Allows a std::vector to be read through a std::istream
+	class vector_istreambuf : public streambuf {
+		using int_type = streambuf::int_type;
 
 	public:
 		vector_istreambuf(const std::vector<std::uint8_t> &data);
 
-		vector_istreambuf(const vector_istreambuf &) = delete;
-		vector_istreambuf &operator=(const vector_istreambuf &) = delete;
+		vector_istreambuf(const vector_istreambuf&) = delete;
+		vector_istreambuf& operator=(const vector_istreambuf&) = delete;
 
 	private:
 		int_type underflow();
@@ -57,17 +57,16 @@ namespace exs {
 		std::size_t position_;
 	};
 
-	/// <summary>
-	/// Allows a std::vector to be written through a std::ostream.
-	/// </summary>
-	class vector_ostreambuf : public std::streambuf {
-		using int_type = std::streambuf::int_type;
+	//	vector output stream buffer
+	//	Allows a std::vector to be written through a std::ostream.
+	class vector_ostreambuf : public streambuf {
+		using int_type = streambuf::int_type;
 
 	public:
 		vector_ostreambuf(std::vector<std::uint8_t> &data);
 
-		vector_ostreambuf(const vector_ostreambuf &) = delete;
-		vector_ostreambuf &operator=(const vector_ostreambuf &) = delete;
+		vector_ostreambuf(const vector_ostreambuf&) = delete;
+		vector_ostreambuf& operator=(const vector_ostreambuf&) = delete;
 
 	private:
 		int_type overflow(int_type c = traits_type::eof());

@@ -5,6 +5,7 @@
 
 namespace exs {
 
+	//	zip file header
 	//	A structure representing the header that occurs before each compressed file in a ZIP archive 
 	//	and again at the end of the file with more information.
 	class zip_file_header {

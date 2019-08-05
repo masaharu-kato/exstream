@@ -80,15 +80,14 @@ bool izstream::read_central_header()
     return true;
 }
 
-std::unique_ptr<std::streambuf> izstream::open(const Path &filename)
+std::unique_ptr<streambuf> izstream::open(const Path &filename)
 {
-    if (!has_file(filename)) throw std::runtime_error("file not found");
+    if(!has_file(filename)) throw std::runtime_error("file not found");
 
     auto header = file_headers.at(filename);
     is.seekg(header.header_offset);
-    auto buffer = new zip_streambuf_decompress(is, header);
 
-    return std::unique_ptr<zip_streambuf_decompress>(buffer);
+    return std::make_unique<zip_streambuf_decompress>(is, header);
 }
 
 std::string izstream::read(const Path &filename)
