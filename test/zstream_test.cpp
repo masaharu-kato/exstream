@@ -1,6 +1,4 @@
 #include <iostream>
-#include <fstream>
-#include <ctime>
 #include "zfstream.h"
 
 using namespace exs;
