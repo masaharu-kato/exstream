@@ -1,22 +1,20 @@
 #pragma once
 #include "bstream.h"
-#include "bfilebuf.h"
+#include <filesystem>
 
 namespace exs {
 	
 	//	binary output file stream
 	class obfstream : public obstream {
 	public:
-		explicit obfstream(const char* filename);
-		explicit obfstream(std::string filename);
+		explicit obfstream(const std::filesystem::path& path);
 	};
 
 
 	//	binary input file stream
 	class ibfstream : public ibstream {
 	public:
-		explicit ibfstream(const char* filename);
-		explicit ibfstream(std::string filename);
+		explicit ibfstream(const std::filesystem::path& path);
 	};
 
 

@@ -104,5 +104,5 @@ int zip_streambuf_compress::sync()
 
 int zip_streambuf_compress::underflow()
 {
-	throw std::runtime_error("Attempt to read write only ostream");
+	throw std::logic_error("Attempt to read write only ostream");
 }

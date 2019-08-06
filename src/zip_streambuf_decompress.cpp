@@ -1,4 +1,5 @@
 #include "zip_streambuf.h"
+#include "zexception.h"
 using namespace exs;
 
 zip_streambuf_decompress::zip_streambuf_decompress(ibstream &is, const zip_file_header& central_header)
@@ -27,7 +28,7 @@ zip_streambuf_decompress::zip_streambuf_decompress(ibstream &is, const zip_file_
 	}
 	else {
 		compressed_data = false;
-		throw std::runtime_error("unsupported compression type, should be DEFLATE or uncompressed");
+		throw zexception("unsupported compression type, should be DEFLATE or uncompressed");
 	}
 
 	// initialize the inflate
@@ -38,7 +39,7 @@ zip_streambuf_decompress::zip_streambuf_decompress(ibstream &is, const zip_file_
 		int result = inflateInit2(&strm, -MAX_WBITS);
 #pragma clang diagnostic pop
 
-		if (result != Z_OK) throw std::runtime_error("couldn't inflate ZIP, possibly corrupted");
+		if (result != Z_OK) throw zexception("couldn't inflate ZIP, possibly corrupted");
 	}
 
 	header = central_header;
@@ -70,7 +71,7 @@ int zip_streambuf_decompress::process()
 			const auto ret = inflate(&strm, Z_NO_FLUSH); // decompress
 
 			if(ret == Z_STREAM_ERROR || ret == Z_NEED_DICT || ret == Z_DATA_ERROR || ret == Z_MEM_ERROR) {
-				throw std::runtime_error("couldn't inflate ZIP, possibly corrupted");
+				throw zexception("couldn't inflate ZIP, possibly corrupted");
 			}
 
 			if(ret == Z_STREAM_END) break;
@@ -103,5 +104,5 @@ int zip_streambuf_decompress::underflow() {
 }
 
 int zip_streambuf_decompress::overflow(int) {
-	throw std::runtime_error("writing to read-only buffer");
+	throw std::logic_error("writing to read-only buffer");
 }

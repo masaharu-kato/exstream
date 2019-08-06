@@ -1,29 +1,17 @@
 #include "filebuf.h"
-#include <stdexcept>
+#include "file_exception.h"
 using namespace exs;
 
-filebuf::filebuf(const char* filename, std::ios_base::openmode mode) {
-	if(!_basetype::open(filename, mode)) {
-		throw std::runtime_error("Failed to open file.");
+filebuf::filebuf(const std::filesystem::path& path, std::ios_base::openmode mode) {
+	if(!_basetype::open(path, mode)) {
+		throw file_exception("Failed to open file.");
 	}
 };
 
-filebuf::filebuf(std::string filename, std::ios_base::openmode mode)
-	: filebuf(filename.c_str(), mode)
+ifilebuf::ifilebuf(const std::filesystem::path& path, std::ios_base::openmode mode)
+	: filebuf(path, mode | std::ios_base::in)
 {}
 
-ifilebuf::ifilebuf(const char* filename)
-	: filebuf(filename, std::ios_base::in)
-{}
-
-ifilebuf::ifilebuf(std::string filename)
-	: ifilebuf(filename.c_str())
-{}
-
-ofilebuf::ofilebuf(const char* filename)
-	: filebuf(filename, std::ios_base::out)
-{}
-
-ofilebuf::ofilebuf(std::string filename)
-	: ofilebuf(filename.c_str())
+ofilebuf::ofilebuf(const std::filesystem::path& path, std::ios_base::openmode mode)
+	: filebuf(path, mode | std::ios_base::out)
 {}

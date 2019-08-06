@@ -1,15 +1,8 @@
 #include "zfstream.h"
 using namespace exs;
 
-ozfstream::ozfstream(const char* filename)
-	: ozstream(std::make_unique<obfilebuf>(filename))  {}
+ozfstream::ozfstream(const std::filesystem::path& path)
+	: ozstream(std::make_unique<obfilebuf>(path))  {}
 
-ozfstream::ozfstream(std::string filename)
-	: ozstream(std::make_unique<obfilebuf>(filename))  {}
-
-
-izfstream::izfstream(const char* filename)
-	: izstream(std::make_unique<ibfilebuf>(filename))  {}
-
-izfstream::izfstream(std::string filename)
-	: izstream(std::make_unique<ibfilebuf>(filename))  {}
+izfstream::izfstream(const std::filesystem::path& path)
+	: izstream(std::make_unique<ibfilebuf>(path))  {}

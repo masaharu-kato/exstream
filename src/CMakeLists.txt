@@ -1,10 +1,11 @@
 cmake_minimum_required (VERSION 3.8)
 
-add_library(zstream STATIC
+add_library(exstream STATIC
 	"filebuf.cpp"
 	"bfilebuf.cpp"
 	"stream.cpp"
 	"bstream.cpp"
+	"fstream.cpp"
 	"bfstream.cpp"
 	"vector_streambuf.cpp"
 	"miniz.cpp"

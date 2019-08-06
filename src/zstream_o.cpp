@@ -1,41 +1,41 @@
 #include "zstream.h"
-#include <stdexcept>
+#include "zexception.h"
 #include "miniz.h"
 #include "zip_streambuf.h"
 
 using namespace exs;
 
 ozstream::ozstream(std::unique_ptr<streambuf> sb)
-    : os(std::move(sb))
+    : os(std::make_unique<obstream>(std::move(sb)))
 {
-    if (!os) throw std::runtime_error("Bad stream.");
+    if (!os) throw zexception("Bad stream.");
 }
 
 ozstream::~ozstream()
 {
     // Write all file headers
-    auto final_position = os.tellp();
+    auto final_position = os->tellp();
 
-    for(const auto &header : file_headers) header.write(os, true);
+    for(const auto &header : file_headers) header.write(*os, true);
 
-    auto central_end = os.tellp();
+    auto central_end = os->tellp();
 
     // Write end of central
-    os << std::uint32_t(0x06054b50);					// end of central
-    os << std::uint16_t(0);								// this disk number
-    os << std::uint16_t(0);								// this disk number
-    os << std::uint16_t(file_headers.size());			// one entry in center in this disk
-    os << std::uint16_t(file_headers.size());			// one entry in center
-    os << std::uint32_t(central_end - final_position);	// size of header
-    os << std::uint32_t(final_position);				// offset to header
-    os << std::uint16_t(0);								//	 zip comment
+    *os << std::uint32_t(0x06054b50);					// end of central
+    *os << std::uint16_t(0);								// this disk number
+    *os << std::uint16_t(0);								// this disk number
+    *os << std::uint16_t(file_headers.size());			// one entry in center in this disk
+    *os << std::uint16_t(file_headers.size());			// one entry in center
+    *os << std::uint32_t(central_end - final_position);	// size of header
+    *os << std::uint32_t(final_position);				// offset to header
+    *os << std::uint16_t(0);								//	 zip comment
 }
 
-std::unique_ptr<streambuf> ozstream::open(const Path &filename)
+std::unique_ptr<streambuf> ozstream::open(const path_t& path)
 {
     zip_file_header header;
-    header.filename = filename;
+    header.path = path;
     file_headers.push_back(header);
 
-    return std::make_unique<zip_streambuf_compress>(&file_headers.back(), os);
+    return std::make_unique<zip_streambuf_compress>(&file_headers.back(), *os);
 }

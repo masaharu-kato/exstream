@@ -1,4 +1,5 @@
 #include "zip_file_header.h"
+#include "zexception.h"
 using namespace exs;
 
 zip_file_header::zip_file_header(ibstream& is, bool f_global)
@@ -7,11 +8,11 @@ zip_file_header::zip_file_header(ibstream& is, bool f_global)
 
 	// read and check for local/global magic
 	if(f_global) {
-		if(sig != 0x02014b50) throw std::runtime_error("Invalid global header signature.");
+		if(sig != 0x02014b50) throw zexception("Invalid global header signature.");
 		is >> version;
 	}
 	else if(sig != 0x04034b50) {
-		throw std::runtime_error("Invalid local header signature.");
+		throw zexception("Invalid local header signature.");
 	}
 
 	// Read rest of header
@@ -37,8 +38,9 @@ zip_file_header::zip_file_header(ibstream& is, bool f_global)
 		is >> header_offset;
 	}
 
-	filename.resize(filename_length, '\0');
+	std::string filename(filename_length, '\0');
 	is.read(&filename[0], filename_length);
+	path = filename;
 
 	extra.resize(extra_length, 0);
 	is.read(reinterpret_cast<char *>(extra.data()), extra_length);
@@ -51,32 +53,32 @@ zip_file_header::zip_file_header(ibstream& is, bool f_global)
 
 void zip_file_header::write(obstream& os, bool f_global) const
 {
-    if(f_global) {
-        os << std::uint32_t(0x02014b50);	// header sig
-        os << std::uint16_t(20);			// version made by
-    }
-    else {
-        os << std::uint32_t(0x04034b50);
-    }
+	if(f_global) {
+		os << std::uint32_t(0x02014b50);	// header sig
+		os << std::uint16_t(20);			// version made by
+	}
+	else {
+		os << std::uint32_t(0x04034b50);
+	}
 
-    os << version;
-    os << flags;
-    os << compression_type;
-    os << stamp_date;
-    os << stamp_time;
-    os << crc;
-    os << compressed_size;
-    os << uncompressed_size;
-    os << std::uint16_t(filename.length());
-    os << std::uint16_t(0); // extra lengthx
+	os << version;
+	os << flags;
+	os << compression_type;
+	os << stamp_date;
+	os << stamp_time;
+	os << crc;
+	os << compressed_size;
+	os << uncompressed_size;
+	os << std::uint16_t(path.string().length());
+	os << std::uint16_t(0); // extra lengthx
 
-    if(f_global) {
-        os << std::uint16_t(0); // filecomment
-        os << std::uint16_t(0); // disk# start
-        os << std::uint16_t(0); // internal file
-        os << std::uint32_t(0); // ext final
-        os << std::uint32_t(header_offset); // rel offset
-    }
+	if(f_global) {
+		os << std::uint16_t(0); // filecomment
+		os << std::uint16_t(0); // disk# start
+		os << std::uint16_t(0); // internal file
+		os << std::uint32_t(0); // ext final
+		os << std::uint32_t(header_offset); // rel offset
+	}
 
-    for(auto c : filename) os << c;
+	for(auto c : path.string()) os << c;
 }

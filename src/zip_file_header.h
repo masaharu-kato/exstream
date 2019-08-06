@@ -1,6 +1,7 @@
 #pragma once
 #include <vector>
 #include <string>
+#include <filesystem>
 #include "bstream.h"
 
 namespace exs {
@@ -23,7 +24,7 @@ namespace exs {
 		std::uint32_t crc = 0;
 		std::uint32_t compressed_size = 0;
 		std::uint32_t uncompressed_size = 0;
-		std::string filename;
+		std::filesystem::path path;
 		std::string comment;
 		std::vector<std::uint8_t> extra;
 		std::uint32_t header_offset = 0;
