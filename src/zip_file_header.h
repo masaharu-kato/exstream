@@ -16,18 +16,18 @@ namespace exs {
 
 		void write(obstream& os, bool f_global) const;
 
-		std::uint16_t version = 20;
-		std::uint16_t flags = 0;
-		std::uint16_t compression_type = 8;
-		std::uint16_t stamp_date = 0;
-		std::uint16_t stamp_time = 0;
-		std::uint32_t crc = 0;
-		std::uint32_t compressed_size = 0;
-		std::uint32_t uncompressed_size = 0;
-		std::filesystem::path path;
+		uint16_t version = 20;
+		uint16_t flags = 0;
+		uint16_t compression_type = 8;
+		uint16_t stamp_date = 0;
+		uint16_t stamp_time = 0;
+		uint32_t crc = 0;
+		uint32_t compressed_size = 0;
+		uint32_t uncompressed_size = 0;
+		path_t path;
 		std::string comment;
-		std::vector<std::uint8_t> extra;
-		std::uint32_t header_offset = 0;
+		std::vector<uint8_t> extra;
+		uint32_t header_offset = 0;
 	};
 
 }

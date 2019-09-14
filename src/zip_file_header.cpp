@@ -25,16 +25,16 @@ zip_file_header::zip_file_header(ibstream& is, bool f_global)
 	is >> compressed_size;
 	is >> uncompressed_size;
 
-	auto filename_length = is.get<std::uint16_t>();
-	auto extra_length = is.get<std::uint16_t>();
+	auto filename_length = is.get<uint16_t>();
+	auto extra_length = is.get<uint16_t>();
 
-	std::uint16_t comment_length = 0;
+	uint16_t comment_length = 0;
 
 	if(f_global) {
 		is >> comment_length;
-		is.skip<std::uint16_t>();	//	disk_number_start
-		is.skip<std::uint16_t>();	//	int_file_attrib
-		is.skip<std::uint32_t>();	//	ext_file_attrib
+		is.skip<uint16_t>();	//	disk_number_start
+		is.skip<uint16_t>();	//	int_file_attrib
+		is.skip<uint32_t>();	//	ext_file_attrib
 		is >> header_offset;
 	}
 
@@ -54,11 +54,11 @@ zip_file_header::zip_file_header(ibstream& is, bool f_global)
 void zip_file_header::write(obstream& os, bool f_global) const
 {
 	if(f_global) {
-		os << std::uint32_t(0x02014b50);	// header sig
-		os << std::uint16_t(20);			// version made by
+		os << uint32_t(0x02014b50);	// header sig
+		os << uint16_t(20);			// version made by
 	}
 	else {
-		os << std::uint32_t(0x04034b50);
+		os << uint32_t(0x04034b50);
 	}
 
 	os << version;
@@ -69,16 +69,16 @@ void zip_file_header::write(obstream& os, bool f_global) const
 	os << crc;
 	os << compressed_size;
 	os << uncompressed_size;
-	os << std::uint16_t(path.string().length());
-	os << std::uint16_t(0); // extra lengthx
+	os << uint16_t(path.length());
+	os << uint16_t(0); // extra lengthx
 
 	if(f_global) {
-		os << std::uint16_t(0); // filecomment
-		os << std::uint16_t(0); // disk# start
-		os << std::uint16_t(0); // internal file
-		os << std::uint32_t(0); // ext final
-		os << std::uint32_t(header_offset); // rel offset
+		os << uint16_t(0); // filecomment
+		os << uint16_t(0); // disk# start
+		os << uint16_t(0); // internal file
+		os << uint32_t(0); // ext final
+		os << uint32_t(header_offset); // rel offset
 	}
 
-	for(auto c : path.string()) os << c;
+	for(auto c : path) os << c;
 }

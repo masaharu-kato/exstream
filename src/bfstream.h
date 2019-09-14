@@ -7,14 +7,14 @@ namespace exs {
 	//	binary output file stream
 	class obfstream : public obstream {
 	public:
-		explicit obfstream(const std::filesystem::path& path);
+		explicit obfstream(const path_t& path);
 	};
 
 
 	//	binary input file stream
 	class ibfstream : public ibstream {
 	public:
-		explicit ibfstream(const std::filesystem::path& path);
+		explicit ibfstream(const path_t& path);
 	};
 
 

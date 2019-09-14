@@ -20,28 +20,31 @@ bool izstream::read_central_header()
     // Find the header
     // NOTE: this assumes the zip file header is the last thing written to file...
     is->seekg(0, std::ios_base::end);
-    auto end_position = std::size_t(is->tellg());
+    auto end_position = size_t(is->tellg());
 
-    auto max_comment_size = std::uint32_t(0xffff); // max size of header
-    auto read_size_before_comment = std::uint32_t(22);
+    auto max_comment_size = uint32_t(0xffff); // max size of header
+    auto read_size_before_comment = uint32_t(22);
 
-    std::uint32_t read_start = max_comment_size + read_size_before_comment;
+    uint32_t read_start = max_comment_size + read_size_before_comment;
 
-    if(read_start > end_position) read_start = std::uint32_t(end_position);
+    if(read_start > end_position) read_start = uint32_t(end_position);
 
     is->seekg(end_position - read_start);
-    std::vector<std::uint8_t> buf(std::size_t(read_start), '\0');
+    std::vector<uint8_t> buf(size_t(read_start), '\0');
 
     if(read_start <= 0) throw zexception("file is empty");
 
     is->read(reinterpret_cast<char *>(buf.data()), read_start);
 
-    if(buf[0] == 0xd0 && buf[1] == 0xcf && buf[2] == 0x11 && buf[3] == 0xe0 && buf[4] == 0xa1 && buf[5] == 0xb1 && buf[6] == 0x1a && buf[7] == 0xe1) throw std::runtime_error("encrypted xlsx, password required");
+    if(    buf[0] == 0xd0 && buf[1] == 0xcf && buf[2] == 0x11 && buf[3] == 0xe0
+		&& buf[4] == 0xa1 && buf[5] == 0xb1 && buf[6] == 0x1a && buf[7] == 0xe1){
+		throw zexception("encrypted zip file.");
+	}
 
-    auto found_header = false;
-    std::size_t header_index = 0;
+    bool found_header = false;
+    size_t header_index = 0;
 
-    for(std::size_t i = 0; i < std::size_t(read_start - 3); ++i) {
+    for(size_t i = 0; i < size_t(read_start - 3); ++i) {
         if (buf[i] == 0x50 && buf[i + 1] == 0x4b && buf[i + 2] == 0x05 && buf[i + 3] == 0x06) {
             found_header = true;
             header_index = i;
@@ -54,24 +57,24 @@ bool izstream::read_central_header()
     // seek to end of central header and read
     is->seekg(end_position - (read_start - std::ptrdiff_t(header_index)));
 
-	is->skip<std::uint32_t>();	//	word
-    auto disk_number1 = is->get<std::uint16_t>();
-    auto disk_number2 = is->get<std::uint16_t>();
+	is->skip<uint32_t>();	//	word
+    auto disk_number1 = is->get<uint16_t>();
+    auto disk_number2 = is->get<uint16_t>();
 
     if(disk_number1 != disk_number2 || disk_number1 != 0) throw zexception("multiple disk zip files are not supported");
 
-    auto num_files = is->get<std::uint16_t>(); // one entry in center in this disk
-    auto num_files_this_disk = is->get<std::uint16_t>(); // one entry in center
+    auto num_files = is->get<uint16_t>(); // one entry in center in this disk
+    auto num_files_this_disk = is->get<uint16_t>(); // one entry in center
 
     if(num_files != num_files_this_disk) throw zexception("multi disk zip files are not supported");
 
-    is->skip<std::uint32_t>(); // size of header
-    auto header_offset = is->get<std::uint32_t>(); // offset to header
+    is->skip<uint32_t>(); // size of header
+    auto header_offset = is->get<uint32_t>(); // offset to header
 
     // go to header and read all file headers
     is->seekg(header_offset);
 
-    for(std::uint16_t i = 0; i < num_files; ++i) {
+    for(uint16_t i = 0; i < num_files; ++i) {
         zip_file_header header(*is, true);
         file_headers[header.path] = header;
     }

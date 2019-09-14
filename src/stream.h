@@ -1,6 +1,7 @@
 #pragma once
 #include <iostream>
 #include <memory>
+#include "basic_types.h"
 
 namespace exs {
 

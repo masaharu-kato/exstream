@@ -1,6 +1,7 @@
 #pragma once
 #include <fstream>
 #include <filesystem>
+#include "basic_types.h"
 
 namespace exs {
 
@@ -9,19 +10,19 @@ namespace exs {
 	public:
 		using _basetype = std::basic_filebuf<char>;
 
-		filebuf(const std::filesystem::path& path, std::ios_base::openmode mode);
+		filebuf(const path_t& path, std::ios_base::openmode mode);
 	};
 
 	//	input file buffer
 	class ifilebuf : public filebuf {
 	public:
-		explicit ifilebuf(const std::filesystem::path& path, std::ios_base::openmode mode = 0);
+		explicit ifilebuf(const path_t& path, std::ios_base::openmode mode = 0);
 	};
 
 	//	output file buffer
 	class ofilebuf : public filebuf {
 	public:
-		explicit ofilebuf(const std::filesystem::path& path, std::ios_base::openmode mode = 0);
+		explicit ofilebuf(const path_t& path, std::ios_base::openmode mode = 0);
 	};
 
 

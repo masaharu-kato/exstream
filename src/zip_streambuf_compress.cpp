@@ -1,8 +1,12 @@
 #include "zip_streambuf.h"
+#include "zexception.h"
 using namespace exs;
 
 zip_streambuf_compress::zip_streambuf_compress(zip_file_header* central_header, obstream &os)
-	: os(os), header(central_header), valid(true)
+ :
+	os(os),
+	header(central_header),
+	valid(true)
 {
 	strm.zalloc = nullptr;
 	strm.zfree = nullptr;
@@ -25,7 +29,7 @@ zip_streambuf_compress::zip_streambuf_compress(zip_file_header* central_header, 
 
 	// Write appropriate header
 	if(header) {
-		header->header_offset = static_cast<std::uint32_t>(os.tellp());
+		header->header_offset = (uint32_t)os.tellp();
 		header->write(os, false);
 	}
 
@@ -54,14 +58,14 @@ zip_streambuf_compress::~zip_streambuf_compress()
 
 int zip_streambuf_compress::process(bool flush)
 {
-	if (!valid) return -1;
+	if(!valid) return -1;
 
-	strm.next_in = reinterpret_cast<Bytef *>(pbase());
-	strm.avail_in = static_cast<unsigned int>(pptr() - pbase());
+	strm.next_in = reinterpret_cast<Bytef*>(pbase());
+	strm.avail_in = (unsigned int)(pptr() - pbase());
 
 	while(strm.avail_in != 0 || flush) {
 		strm.avail_out = buffer_size;
-		strm.next_out = reinterpret_cast<Bytef *>(out.data());
+		strm.next_out = reinterpret_cast<Bytef*>(out.data());
 
 		int ret = deflate(&strm, flush ? Z_FINISH : Z_NO_FLUSH);
 
@@ -71,16 +75,16 @@ int zip_streambuf_compress::process(bool flush)
 			return -1;
 		}
 
-		auto generated_output = static_cast<int>(strm.next_out - reinterpret_cast<std::uint8_t *>(out.data()));
+		auto generated_output = (int)(strm.next_out - reinterpret_cast<std::uint8_t *>(out.data()));
 		os.write(out.data(), generated_output);
-		if (header) header->compressed_size += static_cast<std::uint32_t>(generated_output);
-		if (ret == Z_STREAM_END) break;
+		if(header) header->compressed_size += (uint32_t)generated_output;
+		if(ret == Z_STREAM_END) break;
 	}
 
 	// update counts, crc's and buffers
-	auto consumed_input = static_cast<std::uint32_t>(pptr() - pbase());
+	auto consumed_input = (uint32_t)(pptr() - pbase());
 	uncompressed_size += consumed_input;
-	crc = static_cast<std::uint32_t>(crc32(crc, reinterpret_cast<Bytef *>(in.data()), consumed_input));
+	crc = (uint32_t)(crc32(crc, reinterpret_cast<Bytef*>(in.data()), consumed_input));
 	setp(pbase(), pbase() + buffer_size - 4);
 
 	return 1;
@@ -98,11 +102,11 @@ int zip_streambuf_compress::overflow(int c)
 
 int zip_streambuf_compress::sync()
 {
-	if (pptr() && pptr() > pbase()) return process(false);
+	if(pptr() && pptr() > pbase()) return process(false);
 	return 0;
 }
 
 int zip_streambuf_compress::underflow()
 {
-	throw std::logic_error("Attempt to read write only ostream");
+	throw zexception("attempt to read write only ostream");
 }

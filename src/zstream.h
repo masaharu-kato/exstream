@@ -38,36 +38,16 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGES.
 #include <memory>
 #include <unordered_map>
 #include <filesystem>
+#include "basic_types.h"
 #include "zip_file_header.h"
 #include "bstream.h"
 
-
-namespace std {
-
-	template <>
-	struct hash<filesystem::path> {
-		size_t operator ()(const filesystem::path& path) const {
-			return hash_value(path);
-		}
-	};
-
-}
-
-
 namespace exs {
-
-	class zstream {
-	public:
-		using path_t = std::filesystem::path;
-
-	protected:
-		zstream() = default;
-	};
 
 	//	zip output stream
 	// Writes a series of uncompressed binary file data as ostreams into another ostream
 	// according to the ZIP format.
-	class ozstream : public zstream {
+	class ozstream {
 	public:
 		ozstream(std::unique_ptr<streambuf> sb);
 		virtual ~ozstream();
@@ -86,7 +66,7 @@ namespace exs {
 	//	zip input stream
 	//	Reads an archive containing a number of files from an istream 
 	//	and allows them to be decompressed into an istream.
-	class izstream : public zstream {
+	class izstream {
 	public:
 		izstream(std::unique_ptr<streambuf> sb);
 		virtual ~izstream();
