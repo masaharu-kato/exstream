@@ -8,16 +8,25 @@ zip_streambuf_compress::zip_streambuf_compress(zip_file_header* central_header, 
 	header(central_header),
 	valid(true)
 {
+	using namespace miniz;
+
 	strm.zalloc = nullptr;
 	strm.zfree = nullptr;
 	strm.opaque = nullptr;
 
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wold-style-cast"
-	int ret = deflateInit2(&strm, Z_DEFAULT_COMPRESSION, Z_DEFLATED, -MAX_WBITS, 8, Z_DEFAULT_STRATEGY);
-#pragma clang diagnostic pop
+//	#pragma clang diagnostic push
+//	#pragma clang diagnostic ignored "-Wold-style-cast"
+	return_status ret = deflateInit2(
+		&strm,
+		compression_level::DEFAULT_COMPRESSION,
+		compression_method::DEFLATED,
+		window_bits::DEFAULT_NEGATIVE,
+		8,
+		compression_strategy::DEFAULT
+	);
+//	#pragma clang diagnostic pop
 
-	if (ret != Z_OK)
+	if (ret != return_status::OK)
 	{
 		std::cerr << "libz: failed to deflateInit" << std::endl;
 		valid = false;
@@ -58,6 +67,8 @@ zip_streambuf_compress::~zip_streambuf_compress()
 
 int zip_streambuf_compress::process(bool flush)
 {
+	using namespace miniz;
+
 	if(!valid) return -1;
 
 	strm.next_in = reinterpret_cast<Bytef*>(pbase());
@@ -67,9 +78,9 @@ int zip_streambuf_compress::process(bool flush)
 		strm.avail_out = buffer_size;
 		strm.next_out = reinterpret_cast<Bytef*>(out.data());
 
-		int ret = deflate(&strm, flush ? Z_FINISH : Z_NO_FLUSH);
+		return_status ret = deflate(&strm, flush ? flush_type::FINISH : flush_type::NO_FLUSH);
 
-		if (!(ret != Z_BUF_ERROR && ret != Z_STREAM_ERROR)){
+		if (!(ret != return_status::BUF_ERROR && ret != return_status::STREAM_ERROR)){
 			valid = false;
 			std::cerr << "gzip: gzip error " << strm.msg << std::endl;
 			return -1;
@@ -78,7 +89,7 @@ int zip_streambuf_compress::process(bool flush)
 		auto generated_output = (int)(strm.next_out - reinterpret_cast<std::uint8_t *>(out.data()));
 		os.write(out.data(), generated_output);
 		if(header) header->compressed_size += (uint32_t)generated_output;
-		if(ret == Z_STREAM_END) break;
+		if(ret == return_status::STREAM_END) break;
 	}
 
 	// update counts, crc's and buffers

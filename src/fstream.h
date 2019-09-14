@@ -1,6 +1,5 @@
 #pragma once
 #include "stream.h"
-#include <filesystem>
 
 namespace exs {
 	

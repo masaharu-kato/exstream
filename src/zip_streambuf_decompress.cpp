@@ -10,6 +10,8 @@ zip_streambuf_decompress::zip_streambuf_decompress(ibstream &is, const zip_file_
 	total_uncompressed(0),
 	valid(true)
 {
+	using namespace miniz;
+
 	in.fill(0);
 	out.fill(0);
 
@@ -39,12 +41,12 @@ zip_streambuf_decompress::zip_streambuf_decompress(ibstream &is, const zip_file_
 	// initialize the inflate
 	if (compressed_data && valid)
 	{
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wold-style-cast"
-		int result = inflateInit2(&strm, -MAX_WBITS);
-#pragma clang diagnostic pop
+//	#pragma clang diagnostic push
+//	#pragma clang diagnostic ignored "-Wold-style-cast"
+		return_status result = inflateInit2(&strm, window_bits::DEFAULT_NEGATIVE);
+//	#pragma clang diagnostic pop
 
-		if(result != Z_OK) throw zexception("couldn't inflate ZIP, possibly corrupted");
+		if(result != miniz::return_status::OK) throw zexception("couldn't inflate ZIP, possibly corrupted");
 	}
 
 	header = central_header;
@@ -57,6 +59,8 @@ zip_streambuf_decompress::~zip_streambuf_decompress()
 
 int zip_streambuf_decompress::process()
 {
+	using namespace miniz;
+
 	if(!valid) return -1;
 
 	if(compressed_data) {
@@ -75,13 +79,13 @@ int zip_streambuf_decompress::process()
 				strm.next_in = reinterpret_cast<Bytef*>(in.data());
 			}
 
-			const auto ret = inflate(&strm, Z_NO_FLUSH); // decompress
+			const return_status ret = inflate(&strm, flush_type::NO_FLUSH); // decompress
 
-			if(ret == Z_STREAM_ERROR || ret == Z_NEED_DICT || ret == Z_DATA_ERROR || ret == Z_MEM_ERROR) {
+			if(ret == return_status::STREAM_ERROR || ret == return_status::NEED_DICT || ret == return_status::DATA_ERROR || ret == return_status::MEM_ERROR) {
 				throw zexception("couldn't inflate ZIP, possibly corrupted");
 			}
 
-			if(ret == Z_STREAM_END) break;
+			if(ret == return_status::STREAM_END) break;
 		}
 
 		auto unzip_count = buffer_size - strm.avail_out - 4;

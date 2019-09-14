@@ -11,9 +11,10 @@ namespace exs {
 		friend const_rented_ptr<T>;
 		friend rentable_ptr<T>;
 	public:
-		using const_rented_ptr<T>::const_rented_ptr;
-		using const_rented_ptr<T>::return_ptr;
-		using const_rented_ptr<T>::reset;
+		using base_type = const_rented_ptr<T>;
+		using base_type::const_rented_ptr;
+		using base_type::return_ptr;
+		using base_type::reset;
 		
 	//	explicit rented_ptr(rentable_ptr<T>& ptr);
 
@@ -24,10 +25,10 @@ namespace exs {
 		void take(rented_ptr&& ptr) noexcept;
 
 	//	reset pointer and set new pointer
-		void reset(base_uptr&& ptr) noexcept;
+		void reset(typename base_type::base_uptr&& ptr) noexcept;
 
 	//	replace pointer (keep previous owner and current owner)
-		void replace(base_uptr&& ptr) noexcept;
+		void replace(typename base_type::base_uptr&& ptr) noexcept;
 
 	protected:
 	//	using const_rented_ptr<T>::previous_owner;

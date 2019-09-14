@@ -37,7 +37,6 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGES.
 #include <iostream>
 #include <memory>
 #include <unordered_map>
-#include <filesystem>
 #include "basic_types.h"
 #include "zip_file_header.h"
 #include "bstream.h"

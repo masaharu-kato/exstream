@@ -1,6 +1,5 @@
 #pragma once
 #include "bstream.h"
-#include <filesystem>
 
 namespace exs {
 	

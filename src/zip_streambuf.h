@@ -23,7 +23,7 @@ namespace exs {
 
 		obstream& os; // owned when header==0 (when not part of zip file)
 
-		z_stream strm;
+		miniz::stream strm;
 		std::array<char, buffer_size> in;
 		std::array<char, buffer_size> out;
 
@@ -49,7 +49,7 @@ namespace exs {
 
 		ibstream& is;
 
-		z_stream strm;
+		miniz::stream strm;
 		std::array<char, buffer_size> in;
 		std::array<char, buffer_size> out;
 		zip_file_header header;

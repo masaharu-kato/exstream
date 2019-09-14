@@ -7,8 +7,10 @@ namespace exs {
 	class const_rented_ptr : public rent_ptr_base<T> {
 		friend rented_ptr<T>;
 		friend rentable_ptr<T>;
+
 	public:
-		using rent_ptr_base<T>::rent_ptr_base;
+		using base_type = rent_ptr_base<T>;
+		using base_type::base_type;
 
 		explicit const_rented_ptr(rentable_ptr<T>& ptr);
 		const_rented_ptr(const const_rented_ptr&) = delete;
@@ -28,7 +30,7 @@ namespace exs {
 	//	reset pointer
 		void reset() noexcept;
 
-		base_uptr _get_uptr() noexcept;
+		typename base_type::base_uptr _get_uptr() noexcept;
 
 		rentable_ptr<T>* previous_owner = nullptr;
 	};
