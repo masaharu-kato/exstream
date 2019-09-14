@@ -37,61 +37,60 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGES.
 #include <iostream>
 #include <memory>
 #include <unordered_map>
-#include <vector>
+#include "basic_types.h"
+#include "zip_file_header.h"
+#include "bstream.h"
 
 namespace exs {
 
-	//	A structure representing the header that occurs before each compressed file in a ZIP archive 
-	//	and again at the end of the file with more information.
-	struct ZipFileHeader {
-		std::uint16_t version = 20;
-		std::uint16_t flags = 0;
-		std::uint16_t compression_type = 8;
-		std::uint16_t stamp_date = 0;
-		std::uint16_t stamp_time = 0;
-		std::uint32_t crc = 0;
-		std::uint32_t compressed_size = 0;
-		std::uint32_t uncompressed_size = 0;
-		std::string filename;
-		std::string comment;
-		std::vector<std::uint8_t> extra;
-		std::uint32_t header_offset = 0;
-	};
-
-	using Path = std::string;
-
+	//	zip output stream
 	// Writes a series of uncompressed binary file data as ostreams into another ostream
 	// according to the ZIP format.
 	class ozstream {
 	public:
-		ozstream(std::ostream& stream);
+		ozstream(std::unique_ptr<streambuf> sb);
 		virtual ~ozstream();
 
-		// Returns a pointer to a streambuf which compresses the data it receives.
-		std::unique_ptr<std::streambuf> open(const Path& file);
+		//	Returns a pointer to a streambuf which compresses the data it receives.
+		std::unique_ptr<streambuf> open(const path_t& path);
 
 	private:
-		std::vector<ZipFileHeader> file_headers;
-		std::ostream& os;
+		//	list of written file headers
+		std::vector<zip_file_header> file_headers;
+
+		//	binary output stream
+		std::unique_ptr<obstream> os;
 	};
 
+	//	zip input stream
 	//	Reads an archive containing a number of files from an istream 
 	//	and allows them to be decompressed into an istream.
 	class izstream {
 	public:
-		izstream(std::istream& is);
+		izstream(std::unique_ptr<streambuf> sb);
 		virtual ~izstream();
 
-		std::unique_ptr<std::streambuf> open(const Path& file) const;
-		std::string read(const Path& file) const;
-		std::vector<Path> files() const;
-		bool has_file(const Path& filename) const;
+		//	open specified file as stream buffer
+		std::unique_ptr<streambuf> open(const path_t& path);
+
+		//	read whole content of specified file
+		std::string read(const path_t& path);
+
+		//	returns list of path of file in zip
+		std::vector<path_t> files() const;
+
+		//	returns zip has specified file
+		bool has_file(const path_t& path) const;
 
 	private:
+		//	read main header of zip
 		bool read_central_header();
 
-		std::unordered_map<std::string, ZipFileHeader> file_headers;
-		std::istream& is;
+		//	list of path and header of each file
+		std::unordered_map<path_t, zip_file_header> file_headers;
+
+		//	binary input stream
+		std::unique_ptr<ibstream> is;
 	};
 
 }
