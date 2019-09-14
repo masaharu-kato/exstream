@@ -7,8 +7,18 @@ namespace exs {
 	class rentable_ptr : public rented_ptr<T> {
 		friend const_rented_ptr<T>;
 		friend rented_ptr<T>;
+		using base_type = rented_ptr<T>;
+	protected:
+		using base_type::previous_owner;
+
 	public:
-		using rented_ptr<T>::rented_ptr;
+		using base_type::base_type;
+		using base_uptr = typename base_type::base_uptr;
+
+	//	for gcc/clang only, msvc doesn't need this
+		rentable_ptr(base_uptr&& ptr) : 
+			base_type(std::move(ptr))
+		{}
 
 		rentable_ptr(const rentable_ptr&) = delete;
 		rentable_ptr(rentable_ptr&& ptr);

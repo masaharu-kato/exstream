@@ -27,7 +27,9 @@ public:
 
 int main(void) {
 
-	rentable_ptr<string_stream> source(std::make_unique<string_stream>("hogehoge fugafuga piyopiyo"));
+	auto fuck = std::make_unique<string_stream>("hogehoge fugafuga piyopiyo");
+
+	rentable_ptr<string_stream> source(std::move(fuck));
 
 	std::cout << source->get<std::string>();
 

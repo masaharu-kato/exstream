@@ -20,10 +20,10 @@ namespace exs {
 		previous_owner = &ptr;
 		ptr->current_owner = this;
 	}
-
+		
 	template <class T>
 	void rented_ptr<T>::take(rented_ptr&& ptr) noexcept {
-		return_ptr();c
+		return_ptr();
 		base_uptr::reset(std::move(ptr));
 	}
 

@@ -7,10 +7,16 @@ namespace exs {
 	class const_rented_ptr : public rent_ptr_base<T> {
 		friend rented_ptr<T>;
 		friend rentable_ptr<T>;
+		using base_type = rent_ptr_base<T>;
 
 	public:
-		using base_type = rent_ptr_base<T>;
 		using base_type::base_type;
+		using base_uptr = typename base_type::base_uptr;
+
+	//	for gcc/clang only, msvc doesn't need this
+		const_rented_ptr(base_uptr&& ptr) : 
+			base_type(std::move(ptr))
+		{}
 
 		explicit const_rented_ptr(rentable_ptr<T>& ptr);
 		const_rented_ptr(const const_rented_ptr&) = delete;
@@ -30,7 +36,7 @@ namespace exs {
 	//	reset pointer
 		void reset() noexcept;
 
-		typename base_type::base_uptr _get_uptr() noexcept;
+		base_uptr _get_uptr() noexcept;
 
 		rentable_ptr<T>* previous_owner = nullptr;
 	};

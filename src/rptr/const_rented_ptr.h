@@ -24,7 +24,7 @@ namespace exs {
 	template <class  T>
 	bool const_rented_ptr<T>::return_ptr() noexcept {
 		if(!previous_owner) return false;
-		previous_owner->reset(release());
+		previous_owner->base_uptr::reset(base_uptr::release());
 		previous_owner->current_owner = nullptr;
 		previous_owner = nullptr;
 		return true;
@@ -32,7 +32,7 @@ namespace exs {
 
 	template <class  T>
 	bool const_rented_ptr<T>::has_ptr() const noexcept {
-		return operator bool();
+		return base_uptr::operator bool();
 	}
 
 	template <class T>
@@ -61,7 +61,7 @@ namespace exs {
 	}
 
 	template <class T>
-	auto const_rented_ptr<T>::_get_uptr() noexcept -> typename base_type::base_uptr {
+	auto const_rented_ptr<T>::_get_uptr() noexcept -> base_uptr {
 		return (typename base_type::base_uptr&&)(*this);
 	}
 
