@@ -4,7 +4,7 @@
 
 namespace exs {
 
-	class key_table {
+	class KeyTable {
 
 
 	};

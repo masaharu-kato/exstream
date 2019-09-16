@@ -2,13 +2,13 @@
 
 using namespace exs;
 
-ref_binary::ref_binary(const binary_ref& source, size_t index, size_t size) noexcept :
-	binary(source.data() + index, size),
+RefBinary::RefBinary(const BinaryRef& source, SizedIndex si) noexcept :
+	binary(source.data() + si.index(), si.size()),
 	source(source)
 {}
 
 
-const_ref_binary::const_ref_binary(const const_binary_ref& source, size_t index, size_t size) noexcept :
-	binary(source.data() + index, size),
+ConstRefBinary::ConstRefBinary(const ConstBinaryRef& source, SizedIndex si) noexcept :
+	binary(source.data() + si.index(), si.size()),
 	source(source)
 {}

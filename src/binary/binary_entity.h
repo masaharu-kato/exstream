@@ -3,11 +3,11 @@
 
 namespace exs {
 
-	class binary_entity : public binary {
+	class BinaryEntity : public Binary {
 	public:
-		binary_entity(size_t size) noexcept;
-		binary_entity(const binary_entity&) = delete;
-		~binary_entity() noexcept;
+		BinaryEntity(size_t size) noexcept;
+		BinaryEntity(const BinaryEntity&) = delete;
+		~BinaryEntity() noexcept;
 
 	};
 

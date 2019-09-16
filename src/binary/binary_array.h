@@ -1,43 +1,48 @@
 #pragma once
 #include "binary.h"
+#include "index_table.h"
+#include <memory>
 
 namespace exs {
 
-	class const_binary_vector {
+
+	class ConstBinaryVector {
 	public:
-		class iterator;
+		class Iterator;
 
-		const_binary_vector(const const_binary_ref&, size_t elem_size);
+		ConstBinaryVector(ConstBinaryRef, std::shared_ptr<IndexTable>);
 
-		const_binary_ref operator [](size_t index) const;
+		ConstBinaryRef operator [](size_t index) const;
 
 		size_t size() const noexcept;
 
-		iterator begin() const noexcept;
-		iterator end() const noexcept;
+		Iterator begin() const noexcept;
+		Iterator end() const noexcept;
 
 	private:
-		const_binary_ref p_binary;
+		ConstBinaryRef binary_ref;
+		std::shared_ptr<IndexTable> p_index_table;
 	};
 
 	
 
-	class binary_vector {
+	class BinaryVector {
 	public:
-		class iterator;
+		class Iterator;
 
-		binary_vector(const binary_ref&, size_t elem_size);
+		BinaryVector(BinaryRef, std::shared_ptr<IndexTable>);
 		
-		const_binary_ref operator [](size_t index) const;
-		binary_ref operator [](size_t index);
+		ConstBinaryRef operator [](size_t index) const;
+		BinaryRef operator [](size_t index);
 
 		size_t size() const noexcept;
 
-		iterator begin() noexcept;
-		iterator end() noexcept;
+		Iterator begin() noexcept;
+		Iterator end() noexcept;
 
 	private:
-		binary_ref p_binary;
+		BinaryRef binary_ref;
+		std::shared_ptr<IndexTable> p_index_table;
 	};
 
 }

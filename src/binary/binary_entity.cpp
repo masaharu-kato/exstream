@@ -1,11 +1,11 @@
 #include "binary_entity.h"
 using namespace exs;
 
-binary_entity::binary_entity(size_t size) noexcept : 
-	binary(new byte[size], size)
+BinaryEntity::BinaryEntity(size_t size) noexcept : 
+	Binary(new byte[size], size)
 {}
 
-binary_entity::~binary_entity() noexcept
+BinaryEntity::~BinaryEntity() noexcept
 {
 	delete[] data;
 }
