@@ -10,18 +10,18 @@ namespace exs {
 	public:
 		class Iterator;
 
-		ConstBinaryVector(ConstBinaryRef, std::shared_ptr<IndexTable>);
+		ConstBinaryVector(ConstBinaryRef, SizedIndexTable);
 
-		ConstBinaryRef operator [](size_t index) const;
+		ConstBinaryRef operator [](Index index) const;
 
-		size_t size() const noexcept;
+		Size size() const noexcept;
 
 		Iterator begin() const noexcept;
 		Iterator end() const noexcept;
 
 	private:
-		ConstBinaryRef binary_ref;
-		std::shared_ptr<IndexTable> p_index_table;
+		ConstBinaryRef const_binary_ref;
+		SizedIndexTable sized_index_table;
 	};
 
 	
@@ -30,19 +30,41 @@ namespace exs {
 	public:
 		class Iterator;
 
-		BinaryVector(BinaryRef, std::shared_ptr<IndexTable>);
+		BinaryVector(BinaryRef, SizedIndexTable);
 		
-		ConstBinaryRef operator [](size_t index) const;
-		BinaryRef operator [](size_t index);
+		ConstBinaryRef operator [](Index index) const;
+		BinaryRef operator [](Index index);
 
-		size_t size() const noexcept;
+		Size size() const noexcept;
 
 		Iterator begin() noexcept;
 		Iterator end() noexcept;
 
 	private:
 		BinaryRef binary_ref;
-		std::shared_ptr<IndexTable> p_index_table;
+		SizedIndexTable sized_index_table;
+	};
+
+
+	class ConstBinaryVector::Iterator : public SizedIndexTable::Iterator {
+	public:
+		Iterator(ConstBinaryRef, SizedIndexTable::Iterator);
+
+		ConstBinaryRef operator *() const;
+
+	private:
+		ConstBinaryRef const_binary_ref;
+	};
+
+
+	class BinaryVector::Iterator : public SizedIndexTable::Iterator {
+	public:
+		Iterator(BinaryRef, SizedIndexTable::Iterator);
+
+		BinaryRef operator *() const;
+
+	private:
+		BinaryRef binary_ref;
 	};
 
 }

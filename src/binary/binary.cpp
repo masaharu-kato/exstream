@@ -13,7 +13,7 @@ ConstBinary::~ConstBinary() noexcept
 {}
 
 void ConstBinary::assert_of(SizedIndex si) const {
-	if(si.index() + si.size() > _size) throw out_of_range();
+	if(si.index() + si.size() > _size) throw OutOfRange();
 }
 
 auto ConstBinary::data_of(SizedIndex si) const -> const Byte* {
@@ -58,8 +58,8 @@ BinaryRef Binary::ref() noexcept {
 	return this;
 }
 
-BinaryRef Binary::part_of(size_t index, size_t c_size) {
-	return ref_binary::create(ref(), index, c_size);
+BinaryRef Binary::part_of(SizedIndex si) {
+	return RefBinary::create(ref(), si);
 }
 
 auto Binary::data() noexcept -> data_t {

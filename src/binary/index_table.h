@@ -1,64 +1,89 @@
 #pragma once
 #include <vector>
 #include <memory>
+#include <stdexcept>
+#include "sized_index.h"
 
 namespace exs {
 
+	class IndexTableIterator;
 
 	class IndexTableBase {
 	public:
-		virtual size_t index_of(size_t) const = 0;
-		virtual size_t size_of(size_t) const = 0;
-		virtual size_t size() const = 0;
+		virtual SizedIndex operator [](Index) const = 0;
+		virtual Size size() const = 0;
+		
+		void throw_out_of_range() const;
 
-		class Iterator;
+		class OutOfRange : public std::out_of_range {
+		};
 	};
 
 	class IndexTable {
 	public:
+		IndexTable(std::shared_ptr<IndexTableBase>);
+
+		SizedIndex operator [](size_t) const;
+		Size size() const;
+
+		IndexTableIterator begin() const;
+		IndexTableIterator end() const;
+
+	private:
 		std::shared_ptr<IndexTableBase> ptr;
 	};
 
 	class IndexTableIterator : public IndexTable {
 	public:
-		IndexTableIterator operator ++();
-		IndexTableIterator operator --();
-		 operator *() const;
+		IndexTableIterator(std::shared_ptr<IndexTableBase>, Index);
 
+		IndexTableIterator& operator ++();
+		IndexTableIterator& operator --();
+		IndexTable& operator *() const;
 
 	private:
-		size_t index = 0;
+		Index index = 0;
 	};
 
 
 	class UniformIndexTable : public IndexTableBase {
 	public:
-		virtual size_t index_of(size_t) const override;
-		virtual size_t size_of(size_t) const override;
-		virtual size_t size() const override;
+		virtual SizedIndex operator [](Index) const override;
+		virtual Size size() const override;
 
-	private:
-		size_t elem_size;
+	protected:
+		Size elem_size;
+		Size elem_count;
 	};
 
-	class PaddedUniformIndexTable : public IndexTableBase {
+	class PaddedUniformIndexTable : public UniformIndexTable {
 	public:
-		virtual size_t index_of(size_t) const override;
+		virtual SizedIndex operator [](Index) const override;
 
 	private:
-		size_t unit_size;
+		Size unit_size;
 	};
 
 
 	class UnevenIndexTable : public IndexTableBase {
 	public:
-		virtual size_t index_of(size_t) const override;
-		virtual size_t size_of(size_t) const override;
-		virtual size_t size() const override;
+		virtual SizedIndex operator [](Index) const override;
+		virtual Size size() const override;
+
+	protected:
+		template <class... Args>
+		UnevenIndexTable(Args&&... args);
 
 	private:
-		std::vector<size_t> _index_of;
+		SizedIndexTable sized_index_table;
 	};
+
+
+	
+	template <class... Args>
+	UnevenIndexTable::UnevenIndexTable(Args&&... args)
+		: sized_index_table(args...)
+	{}
 
 
 }
