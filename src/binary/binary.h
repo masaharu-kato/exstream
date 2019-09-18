@@ -40,7 +40,7 @@ namespace exs {
 		
 
 	protected:
-		void assert_of(size_t index, size_t size) const;
+		void assert_of(SizedIndex) const;
 
 		ConstBinary() noexcept;
 		ConstBinary(Byte* data, size_t size) noexcept;

@@ -25,18 +25,18 @@ namespace exs {
 		Index(size_t index) noexcept : index(index) {}
 		Index(Size) = delete;
 		
-		Index operator +(const Size& i) const noexcept;
-		Size operator -(const Index& i) const noexcept;
-		Index operator -(const Size& i) const noexcept;
+		Index operator +(const Size&) const noexcept;
+		Size operator -(const Index&) const noexcept;
+		Index operator -(const Size&) const noexcept;
 
-		auto& operator +=(const Size& i) const noexcept;
-		auto& operator -=(const Index& i) const noexcept;
-		auto& operator -=(const Size& i) const noexcept;
-
+		Index& operator +=(const Size&) const noexcept;
+		Index& operator -=(const Index&) const noexcept;
+		Index& operator -=(const Size&) const noexcept;
 
 		auto operator *(const Size& s) const noexcept {
 			return Index(index * (size_t)s);
 		}
+
 
 		operator size_t() const noexcept { return index; }
 		operator size_t&() noexcept { return index; }
@@ -59,6 +59,7 @@ namespace exs {
 
 	class SizedIndexTable : public std::vector<SizedIndex> {
 	public:
+		SizedIndexTable(const std::vector<SizedIndex>&) noexcept;
 		SizedIndexTable(const std::vector<Index>&, Size whole_size);
 		SizedIndexTable(const std::vector<Size>&, Index offset = 0);
 

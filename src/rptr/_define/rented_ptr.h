@@ -10,9 +10,12 @@ namespace exs {
 	class rented_ptr : public const_rented_ptr<T> {
 		friend const_rented_ptr<T>;
 		friend rentable_ptr<T>;
+
 		using base_type = const_rented_ptr<T>;
+
 	protected:
 		using base_type::previous_owner;
+
 	public:
 		using base_type::base_type;
 		using base_type::return_ptr;

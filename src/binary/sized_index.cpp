@@ -2,6 +2,38 @@
 
 using namespace exs;
 
+Index Index::operator +(const Size& s) const noexcept
+{
+	return {index + (size_t)s};
+}
+
+Size Index::operator -(const Index& i) const noexcept
+{
+	return {index - i.index};
+}
+
+Index Index::operator -(const Size& s) const noexcept
+{
+	return {index - (size_t)s};
+}
+
+
+Index& Index::operator +=(const Size& s) const noexcept {
+	index += (size_t)s;
+	return *this;
+}
+
+Index& Index::operator -=(const Index& i) const noexcept {
+	index -= i.index;
+	return *this;
+}
+
+Index& Index::operator -=(const Size& s) const noexcept {
+	index -= (size_t)s;
+	return *this;
+}
+
+
 SizedIndex::SizedIndex(Index _index, Size _size) noexcept
 	: _index(_index), _size(_size)
 {}
@@ -18,6 +50,10 @@ Size SizedIndex::size() const noexcept {
 	return _size;
 }
 
+SizedIndexTable::SizedIndexTable(const std::vector<SizedIndex>& sized_index_vec) noexcept
+	: std::vector<SizedIndex>(sized_index_vec);
+{}
+
 SizedIndexTable::SizedIndexTable(const std::vector<Index>& indexes, Size whole_size)
 {
 	size_t count = indexes.size();
@@ -31,7 +67,7 @@ SizedIndexTable::SizedIndexTable(const std::vector<Index>& indexes, Size whole_s
 
 }
 
-SizedIndexTable::SizedIndexTable(const std::vector<Size>& sizes, Index offset = 0)
+SizedIndexTable::SizedIndexTable(const std::vector<Size>& sizes, Index offset)
 {
 	size_t count = sizes.count();
 
