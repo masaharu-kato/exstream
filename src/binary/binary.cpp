@@ -2,9 +2,9 @@
 #include "ref_binary.h"
 using namespace exs;
 
-ConstBinary::ConstBinary() noexcept = default;
+//	ConstBinary::ConstBinary() noexcept = default;
 
-ConstBinary::ConstBinary(Byte* data, size_t size) noexcept : 
+ConstBinary::ConstBinary(Byte* data, Size size) noexcept : 
 	_data(data),
 	_size(size)
 {}
@@ -13,10 +13,10 @@ ConstBinary::~ConstBinary() noexcept
 {}
 
 void ConstBinary::assert_of(SizedIndex si) const {
-	if(si.index() + si.size() > _size) throw OutOfRange();
+	if(si.index() + si.size() > (Index)_size) throw OutOfRange();
 }
 
-auto ConstBinary::data_of(SizedIndex si) const -> const Byte* {
+const Byte* ConstBinary::data_of(SizedIndex si) const {
 	assert_of(si.index(), si.size());
 	return _data + index;
 }
@@ -29,11 +29,11 @@ ConstRefBinary ConstBinary::part_of(SizedIndex si) const {
 	return ConstRefBinary::create(ref(), si);
 }
 
-size_t ConstBinary::size() const noexcept {
+Size ConstBinary::size() const noexcept {
 	return _size;
 }
 
-auto ConstBinary::data() const noexcept -> const Byte* {
+const Byte* ConstBinary::data() const noexcept {
 	return _data;
 }
 
@@ -49,7 +49,7 @@ ConstBinary::unset_reference() noexcept
 
 
 
-auto Binary::data_of(SizedIndex si) const -> Byte* {
+Byte* Binary::data_of(SizedIndex si) const {
 	assert_of(si);
 	return _data + si.index();
 }
@@ -58,16 +58,20 @@ BinaryRef Binary::ref() noexcept {
 	return this;
 }
 
+ConstBinaryRef Binary::c_ref() noexcept {
+	return ConstBinary::ref();
+}
+
 BinaryRef Binary::part_of(SizedIndex si) {
 	return RefBinary::create(ref(), si);
 }
 
-auto Binary::data() noexcept -> data_t {
+Byte* Binary::data() noexcept {
 	return _data;
 }
 
-auto Binary::c_data() const noexcept -> ConstBinary::data_t {
-	return _data;
+const Byte* Binary::c_data() const noexcept {
+	return ConstBinary::data();
 }
 
 

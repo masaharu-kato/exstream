@@ -5,9 +5,10 @@
 
 namespace exs {
 
-
+//	vector (variable length array) of ConstBinary
 	class ConstBinaryVector {
 	public:
+	//	iterator class
 		class Iterator;
 
 		ConstBinaryVector(ConstBinaryRef, SizedIndexTable);
@@ -25,9 +26,10 @@ namespace exs {
 	};
 
 	
-
+//	vector (variable length array) of Binary
 	class BinaryVector {
 	public:
+	//	iterator class
 		class Iterator;
 
 		BinaryVector(BinaryRef, SizedIndexTable);

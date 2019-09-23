@@ -16,7 +16,7 @@ namespace exs {
 		SizedIndex operator [](Name) const noexcept;
 
 	private:
-		NameIndexMap name_indedx_map;
+		NameIndexMap name_index_map;
 	};
 
 }

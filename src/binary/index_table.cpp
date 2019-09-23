@@ -14,7 +14,7 @@ Size IndexTable::size() const {
 	return ptr->size();
 }
 
-IndexTable::IndexTable(std::shared_ptr<IndexTableBase> ptr)
+IndexTable::IndexTable(IndexTableBase* ptr)
 	: ptr(ptr)
 {}
 
@@ -26,8 +26,8 @@ IndexTableIterator IndexTable::end() const {
 	return {ptr, ptr->size() - 1};
 }
 
-IndexTableIterator::IndexTableIterator(std::shared_ptr<IndexTableBase> ptr, Index index)
-	: ptr(ptr), index(index)
+IndexTableIterator::IndexTableIterator(IndexTable index_table, Index index)
+	: IndexTable(index_table), index(index)
 {}
 
 IndexTableIterator IndexTableIterator::operator++() {
@@ -40,8 +40,12 @@ IndexTableIterator IndexTableIterator::operator--() {
 	return *this;
 }
 
-IndexTable& IndexTableIterator::operator*() const {
-	return *this;
+SizedIndex IndexTableIterator::operator *() const {
+	return operator [](index);
+}
+
+SizedIndex* IndexTableIterator::operator ->() const {
+	return &operator [](index);
 }
 
 

@@ -1,4 +1,4 @@
-#include "binary_array.h"
+#include "binary_vector.h"
 
 using namespace exs;
 

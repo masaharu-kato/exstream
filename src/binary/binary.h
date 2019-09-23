@@ -9,11 +9,12 @@ namespace exs {
 	class ConstRefBinary;
 	class RefBinary;
 	
+	using Byte = char;
+	
 //	const binary class
 	class ConstBinary {
 		friend BinaryRef;
 	public:
-		using Byte = char;
 
 	//	get readonly data starts from index as type T
 		template <class T>
@@ -29,30 +30,45 @@ namespace exs {
 	//	get data pointer of specific index
 		virtual const Byte* data_of(SizedIndex) const;
 
-		size_t size() const noexcept;
+	//	get size (length) of data
+		Size size() const noexcept;
+
+	//	get first pointer of data
 		const Byte* data() const noexcept;
 
+	//	get own reference
 		ConstBinaryRef ref() const noexcept;
 
-
+	//	set reference
+	//	(increment reference counter)
 		void set_reference() noexcept;
+
+	//	unset reference
+	//	(decrement reference counter, and delete this if counter is zero)
 		void unset_reference() noexcept;
 		
 
 	protected:
+	//	check if given sized-index is valid
 		void assert_of(SizedIndex) const;
 
-		ConstBinary() noexcept;
-		ConstBinary(Byte* data, size_t size) noexcept;
+	//	ConstBinary() noexcept;
+		ConstBinary(Byte* data, Size size) noexcept;
 		virtual ~ConstBinary() noexcept;
 
 
 	private:
-		size_t _size = 0;
+	//	size (length) of data
+		Size _size = 0;
+
+	//	first pointer of data
 		Byte* _data = nullptr;
+
+	//	reference counter
 		size_t refed_count = 0;
 
 
+	//	out-of-range exception class
 		class OutOfRange : public std::out_of_range {
 		public:
 			using std::out_of_range::out_of_range;
@@ -64,28 +80,37 @@ namespace exs {
 //	binary class
 	class Binary : public ConstBinary {
 	public:
-		using ConstBinary::const_binary;
+		using ConstBinary::ConstBinary;
 		using ConstBinary::data;
 		using ConstBinary::get;
+		using ConstBinary::ref;
 		
 	//	get writable data starts from index as type T
 		template <class T>
-		T& get(size_t index);
+		T& get(Size index);
 
 	//	get data pointer of specific index
 		virtual Byte* data_of(SizedIndex) const;
 
 	//	get particial binary
-		BinaryRef part_of(SizedIndex) const;
+		BinaryRef part_of(SizedIndex);
 
+	//	get first pointer of data
 		Byte* data() noexcept;
+
+	//	get readonly first pointer of data
 		const Byte* c_data() const noexcept;
 
+	//	get own reference
 		BinaryRef ref() noexcept;
+
+	//	get readonly own reference
+		ConstBinaryRef c_ref() noexcept;
 
 	};
 
 
+//	reference of ConstBinary
 	class ConstBinaryRef {
 	public:
 		ConstBinaryRef(ConstBinary*) noexcept;
@@ -98,6 +123,7 @@ namespace exs {
 	};
 
 
+//	reference of Binary
 	class BinaryRef {
 	public:
 		BinaryRef(Binary*) noexcept;

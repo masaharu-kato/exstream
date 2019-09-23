@@ -5,7 +5,9 @@
 namespace exs {
 
 	class Index;
+	class Size;
 
+//	size value class
 	class Size {
 	private:
 		size_t size;
@@ -18,6 +20,7 @@ namespace exs {
 	};
 
 	
+//	index value class
 	class Index {
 	private:
 		size_t index;
@@ -43,6 +46,13 @@ namespace exs {
 	};
 
 
+
+
+
+
+
+
+//	pair of size value and index value
 	class SizedIndex {
 	public:
 		SizedIndex(Index _index, Size _size) noexcept;
@@ -57,15 +67,18 @@ namespace exs {
 	};
 
 
+//	table (variable length array) of SizedIndex
 	class SizedIndexTable : public std::vector<SizedIndex> {
 	public:
 		SizedIndexTable(const std::vector<SizedIndex>&) noexcept;
 		SizedIndexTable(const std::vector<Index>&, Size whole_size);
 		SizedIndexTable(const std::vector<Size>&, Index offset = 0);
 
+	//	invalid values exception
 		class InvalidValues : public std::runtime_error {
 		};
 
+	//	iterator class
 		using Iterator = iterator;
 	};
 

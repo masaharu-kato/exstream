@@ -3,16 +3,19 @@
 
 namespace exs {
 
+//	entity (actural data) of ConstBinary
 	class ConstBinaryEntity : public ConstBinary {
 	public:
-		explicit ConstBinaryEntity(size_t size) noexcept;
+		explicit ConstBinaryEntity(Size size) noexcept;
 		ConstBinaryEntity(const BinaryEntity&) = delete;
 		~ConstBinaryEntity() noexcept;
 	};
 
+
+//	entity (actual data) of Binary
 	class BinaryEntity : public Binary {
 	public:
-		explicit BinaryEntity(size_t size) noexcept;
+		explicit BinaryEntity(Size size) noexcept;
 		BinaryEntity(const BinaryEntity&) = delete;
 		~BinaryEntity() noexcept;
 	};
